@@ -12,7 +12,7 @@ public class PlayerRanger : Remote
     public Vector2 movement;
     public GameObject arrows;
     public Camera mainCamera;
-
+    public Vector2 dashTarget;
     private GameObject arrow;
 
 
@@ -207,6 +207,58 @@ public class PlayerRanger : Remote
         arrow.transform.localPosition = Vector3.zero;
         arrow.transform.localRotation = Quaternion.AngleAxis(0, Vector3.forward);
     }
+
+    public void DashButton()
+    {
+        if (CD1 != 0)
+            return;
+        if (reloadNum <= reloadNumMax - 2)
+            reloadNum += 2;
+        else
+            reloadNum = reloadNumMax;
+        if (dashTarget != Vector2.zero)
+            nowLook = dashTarget;
+        else
+            nowLook = movement;
+
+        dashtime = dashTime;
+        CD1 = dashCD;
+        isDashing = true;
+    }
+    private void Dash()
+    {
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    if (movement != Vector2.zero)
+        //        nowLook = movement;
+        //    else
+        //        nowLook = (target - (Vector2)transform.position).normalized;
+
+        //    dashtime = dashTime;
+        //    CD1 = dashCD;
+        //    isDashing = true;
+        //}
+        if (isDashing)
+        {
+            Debug.Log(1);
+            if (dashtime <= 0)
+            {
+                isDashing = false;
+                dashtime = 0;
+                characterRb.velocity = Vector2.zero;
+                gameObject.layer = LayerMask.NameToLayer("player");
+                return;
+            }
+            else
+            {
+                Debug.Log(2);
+                gameObject.layer = LayerMask.NameToLayer("noCol");
+                characterRb.velocity = nowLook * moveSpeed * 5;
+                dashtime -= Time.deltaTime;
+            }
+        }
+    }
+
     private void CD()
     {
         if (isAttack)
@@ -265,6 +317,9 @@ public class PlayerRanger : Remote
     {
         base.Stop();
     }
+
+
+
 }
 
 
