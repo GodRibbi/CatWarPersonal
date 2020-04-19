@@ -13,6 +13,7 @@ public class PlayerRanger : Remote
     public GameObject arrows;
     public Camera mainCamera;
     public Vector2 dashTarget;
+    public GameObject knifes;
     private GameObject arrow;
 
 
@@ -117,6 +118,7 @@ public class PlayerRanger : Remote
         Anim();
         if (dead || stop)
             return;
+        Dash();
         if (isDashing)
             return;
         Movement();
@@ -212,15 +214,27 @@ public class PlayerRanger : Remote
     {
         if (CD1 != 0)
             return;
-        if (reloadNum <= reloadNumMax - 2)
-            reloadNum += 2;
-        else
-            reloadNum = reloadNumMax;
         if (dashTarget != Vector2.zero)
             nowLook = dashTarget;
         else
             nowLook = movement;
-
+        Quaternion rotation = new Quaternion();
+        Debug.Log(nowLook);
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == 0)
+                rotation = Quaternion.AngleAxis(-GetSight(), Vector3.forward);
+            else if (i == 1)
+                rotation = Quaternion.AngleAxis(GetSight(), Vector3.forward);
+            else
+                rotation = Quaternion.AngleAxis(0, Vector3.forward);
+            Debug.Log(Quaternion.Euler(nowLook) * Quaternion.AngleAxis(GetSight(), Vector3.forward));
+            GameObject knife = ObjectPool.GetInstance().GetObj(knifes, transform.position, bandolier);
+            knife.transform.right = nowLook;
+            knife.transform.rotation *= rotation;
+            knife.GetComponent<Rigidbody2D>().AddForce(knife.transform.right * GetBulletForce()*2, ForceMode2D.Impulse);
+            knife.GetComponent<Knife>().remote = this;
+        }
         dashtime = dashTime;
         CD1 = dashCD;
         isDashing = true;
@@ -240,7 +254,6 @@ public class PlayerRanger : Remote
         //}
         if (isDashing)
         {
-            Debug.Log(1);
             if (dashtime <= 0)
             {
                 isDashing = false;
@@ -251,9 +264,8 @@ public class PlayerRanger : Remote
             }
             else
             {
-                Debug.Log(2);
                 gameObject.layer = LayerMask.NameToLayer("noCol");
-                characterRb.velocity = nowLook * moveSpeed * 5;
+                characterRb.velocity = -nowLook * moveSpeed * 5;
                 dashtime -= Time.deltaTime;
             }
         }
@@ -292,16 +304,16 @@ public class PlayerRanger : Remote
                 }
             }
         }
-        //if (CD1 <= 0)
-        //{
-        //    CD1 = 0;
-        //    dashCDImage.fillAmount = 1;
-        //}
-        //else
-        //{
-        //    CD1 -= Time.deltaTime;
-        //    dashCDImage.fillAmount = (dashCD - CD1) / dashCD;
-        //}
+        if (CD1 <= 0)
+        {
+            CD1 = 0;
+            dashCDImage.fillAmount = 1;
+        }
+        else
+        {
+            CD1 -= Time.deltaTime;
+            dashCDImage.fillAmount = (dashCD - CD1) / dashCD;
+        }
         //if (CD2 <= 0)
         //{
         //    CD2 = 0;

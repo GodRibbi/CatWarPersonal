@@ -220,7 +220,6 @@ public class PlayerS686 : Remote
         //}
         if (isDashing)
         {
-            Debug.Log(1);
             if (dashtime <= 0)
             {
                 isDashing = false;
@@ -231,7 +230,6 @@ public class PlayerS686 : Remote
             }
             else
             {
-                Debug.Log(2);
                 gameObject.layer = LayerMask.NameToLayer("noCol");
                 characterRb.velocity = nowLook * moveSpeed * 5;
                 dashtime -= Time.deltaTime;

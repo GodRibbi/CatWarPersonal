@@ -20,17 +20,17 @@ public class Arrow : MonoBehaviour
         if (timeVal < remote.GetAttackSpeed())
         {
             distance = remote.GetScope() / (2 - Percent.GetPercent(timeVal, remote.GetAttackSpeed()));
-            damage = remote.GetAtk() / (2 - Percent.GetPercent(timeVal, remote.GetAttackSpeed()));
+            damage = remote.GetAtk() * Percent.GetPercent(timeVal, remote.GetAttackSpeed()) * 5;
         }
         else if (timeVal >= remote.GetAttackSpeed() && timeVal < remote.GetAttackSpeed() * 2)
         {
             distance = remote.GetScope() * Percent.GetPercent(timeVal, remote.GetAttackSpeed());
-            damage = remote.GetAtk() * Percent.GetPercent(timeVal, remote.GetAttackSpeed());
+            damage = remote.GetAtk() * Percent.GetPercent(timeVal, remote.GetAttackSpeed()) * 5;
         }
         else if (timeVal >= remote.GetAttackSpeed() * 2)
         {
             distance = remote.GetScope() * 2;
-            damage = remote.GetAtk() * 2;
+            damage = remote.GetAtk() * 10;
         }
         if ((transform.position - remote.transform.position).magnitude >= distance)
         {
