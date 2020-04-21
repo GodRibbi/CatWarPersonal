@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class BuffCharacter : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    public List<BuffData> buffs;
+    public void AddBuff(BuffData buff)
     {
-        
+        buffs.Add(buff);
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Remove(BuffData buff)
     {
-        
+        buffs.Remove(buff);
     }
 }
